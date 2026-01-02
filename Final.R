@@ -1127,12 +1127,12 @@ cat("✓ 機器學習模型性能圖已顯示\n\n")
 
 # 所有模型RMSE對比
 p_all <- ggplot(all_models %>% arrange(RMSE), 
-                aes(x = reorder(Model, RMSE), y = RMSE, fill = ifelse(grepl("迴歸|Ridge|Lasso|隨機森林|XGBoost", Model), "機器學習", "時序"))) +
+                aes(x = reorder(Model, RMSE), y = RMSE, fill = ifelse(grepl("迴歸|Ridge|Lasso|隨機森林|XGBoost|ElasticNet", Model), "機器學習", "時序"))) +
   geom_bar(stat = "identity", alpha = 0.7) +
   geom_text(aes(label = round(RMSE, 1)), vjust = -0.3, size = 3) +
   scale_fill_manual(values = c("時序" = "coral", "機器學習" = "steelblue")) +
   coord_flip() +
-  labs(title = "所有模型綜合性能比較",
+  labs(title = "所有模型RMSE綜合性能比較",
        subtitle = "8個模型: ARIMA、ETS、HW + 線性迴歸、Ridge、Lasso、隨機森林、XGBoost",
        x = "模型", y = "RMSE", fill = "模型類型") +
   theme_minimal() +
@@ -1144,18 +1144,23 @@ print(p_all)
 cat("✓ 所有模型性能圖已顯示\n\n")
 
 # MAPE對比
-p_mape <- ggplot(all_models %>% arrange(MAPE), 
-                 aes(x = reorder(Model, MAPE), y = MAPE)) +
-  geom_bar(stat = "identity", fill = "coral", alpha = 0.7) +
-  geom_text(aes(label = round(MAPE, 2)), vjust = -0.3, size = 3) +
+p_mape_all <- ggplot(all_models %>% arrange(MAPE), 
+                     aes(x = reorder(Model, MAPE), y = MAPE, 
+                         fill = ifelse(grepl("迴歸|Ridge|Lasso|隨機森林|XGBoost|ElasticNet", Model), "機器學習", "時序"))) +
+  geom_bar(stat = "identity", alpha = 0.7) +
+  geom_text(aes(label = round(MAPE, 2)), vjust = -0.3, size = 3) + 
+  scale_fill_manual(values = c("時序" = "coral", "機器學習" = "steelblue")) +
   coord_flip() +
-  labs(title = "模型MAPE對比 (越低越好)",
-       x = "模型", y = "MAPE (%)") +
+  labs(title = "所有模型 MAPE 綜合性能比較(越低越好)",
+       subtitle = "8個模型: ARIMA、ETS、HW + 線性迴歸、Ridge、Lasso、隨機森林、XGBoost",
+       x = "模型", y = "MAPE (%)", fill = "模型類型") +
   theme_minimal() +
-  theme(plot.title = element_text(hjust = 0.5, size = 14, face = "bold"))
+  theme(plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
+        plot.subtitle = element_text(hjust = 0.5, size = 11),
+        legend.position = "right")
 
-print(p_mape)
-cat("✓ MAPE對比圖已顯示\n\n")
+print(p_mape_all)
+cat("✓ 所有模型 MAPE 圖已顯示\n\n")
 
 # ============================================================================
 # PHASE 8: 視覺化
